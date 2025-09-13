@@ -69,7 +69,7 @@ local function GetTarget()
 				local Distance = (Player.Character:FindFirstChildWhichIsA("Humanoid").RootPart.Position-(Humanoid.RootPart.Position+Humanoid.RootPart.AssemblyLinearVelocity*0.5)).Magnitude
 				local NotInLobby = not v.Character:FindFirstChild("InLobby")
 				local Visible = v.Character.Torso.Transparency == 0
-				local Good = Visible And NotInLobby
+				local Good = Visible and NotInLobby
 				if Distance < MinimumDistance and Good then
 					MinimumDistance = Distance
 					Target = v.Character
@@ -84,6 +84,10 @@ local Kill = workspace.Arena.CubeOfDeathArea["the cube of death(i heard it kills
 
 local SpawnCFrame = CFrame.new(Vector3.zero)
 
+local cwf = task.wait
+local cn = 0.582
+local fire = HitRemote:FireServer
+
 local function Gain()
 	local Check = Check()
 	local Target = GetTarget()
@@ -97,11 +101,11 @@ local function Gain()
 		workspace.Gravity = 50
 		local Finished = false
 		local Connection = RunService.Heartbeat:Connect(function()
-			LocalRoot.CFrame = CFrame.lookAt(TargetRoot.Position+Offset+Vector3.yAxis*6 ,Kill)
-			LocalRoot.AssemblyLinearVelocity = Vector3.zero
+			LocalRoot.CFrame = CFrame.lookAt(TargetRoot.Position+Offset+Vector3.yAxis*6.5 ,Kill)
+			LocalRoot.AssemblyLinearVelocity = Vector3.yAxis
 		end)
 		task.spawn(function()
-			while task.wait(0.1) do
+			while task.wait(0.05) do
 				if Finished == true then
 					break
 				end
@@ -110,9 +114,9 @@ local function Gain()
 			end
 		end)
 		repeat
-			HitRemote:FireServer(TargetRoot)
-			task.wait(0.58)
-		until tick()-Start >= 50 or TargetRoot.Parent:FindFirstChildWhichIsA("Humanoid").Health == 0 or LocalRoot.Parent:FindFirstChildWhichIsA("Humanoid").Health == 0 or not Players:FindFirstChild(Target.Name)
+			fire(TargetRoot)
+			cwf(cn)
+		until tick()-Start >= 50 or TargetRoot.Parent:FindFirstChildWhichIsA("Humanoid").Health == 0 or LocalRoot.Parent:FindFirstChildWhichIsA("Humanoid").Health == 0 or not Players:FindFirstChild(Target.Name) or TargetRoot.Position.Magnitude > 1024
 		Finished = true
 		Connection:Disconnect()
 		LocalRoot.AssemblyLinearVelocity = Vector3.zero
