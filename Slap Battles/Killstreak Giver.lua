@@ -69,7 +69,8 @@ local function GetTarget()
 				local Distance = (Player.Character:FindFirstChildWhichIsA("Humanoid").RootPart.Position-(Humanoid.RootPart.Position+Humanoid.RootPart.AssemblyLinearVelocity*0.5)).Magnitude
 				local NotInLobby = not v.Character:FindFirstChild("InLobby")
 				local Visible = v.Character.Torso.Transparency == 0
-				if Distance < MinimumDistance then
+				local Good = Visible And NotInLobby
+				if Distance < MinimumDistance and Good then
 					MinimumDistance = Distance
 					Target = v.Character
 				end
