@@ -17,7 +17,7 @@ local Reset = LocalPlayer.Reset
 
 local Grass = workspace.Arena["main island"].Grass
 local ZeroPosition = Grass.Position
-local BotSpeed = 21
+local BotSpeed = 22
 local Random = math.random
 local Wait = task.wait
 local Abs = math.abs
@@ -70,6 +70,7 @@ local Default = MakeButton(Frame, 0.225, "Default")
 local Dual = MakeButton(Frame, 0.5, "Dual")
 local Snow = MakeButton(Frame, 0.775, "Snow")
 local Selected = Instance.new("TextLabel", Frame)
+getgenv().s = "high"
 Selected.AnchorPoint = Vector2.new(0.5, 0.5)
 Selected.BackgroundTransparency = 1
 Selected.Size = UDim2.new(0.8, 0, 0.1, 0)
@@ -154,13 +155,6 @@ LocalPlayer.CharacterAdded:Connect(CharacterLoaded)
 local Amp = math.clamp(BotSpeed/10, 2, 4)
 print(Amp)
 
-local function ReturnValidVector3Unit(Vector)
-    if Vector.Magnitude == 0 then
-        return Vector3.zero
-    end
-    return Vector
-end
-
 local function GetClosestPlayer()
     local MinimumDistance = 512
     local ClosestPlayer
@@ -171,7 +165,7 @@ local function GetClosestPlayer()
             local Humanoid = Character:FindFirstChildWhichIsA("Humanoid")
             if Humanoid then
                 local Root = Humanoid.RootPart or Character:WaitForChild("Head", 1)
-                local RootPosition = Root.Position+ReturnValidVector3Unit(Root.AssemblyLinearVelocity)
+                local RootPosition = Root.Position
                 local VisionPosition = LocalRoot.Position-LocalRoot.AssemblyLinearVelocity.Unit*Amp
                 local InMap = (Root.Position-ZeroPosition).Magnitude < 120
                 local InLobby = Character:FindFirstChild("InLobby")
@@ -193,6 +187,7 @@ local function GetClosestPlayer()
             end
         end
     end
+    print("Distance: "..MinimumDistance)
     return ClosestPlayer, MinimumDistance
 end
 
@@ -231,6 +226,7 @@ local SlapCooldown = false
 
 local function BehaviourLoop()
     while true do
+        local AcceptableDistance = 18-(LocalPlayer:GetNetworkPing()*2)
         local RRNG = Random(50, 90)/1000
         local Character = LocalPlayer.Character
         if LocalHumanoid then
@@ -246,7 +242,7 @@ local function BehaviourLoop()
                     if LocalHumanoid.Health > 0 then
                         local TargetPosition = TargetRoot.Position
                         LocalHumanoid:MoveTo(TargetPosition)
-                        if Distance < 18 and SlapCooldown == false then
+                        if Distance < AcceptableDistance and SlapCooldown == false then
                             SlapCooldown = true
                             local TRNG = Random(50, 60)/100
                             Animation:Play()
