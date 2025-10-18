@@ -15,6 +15,7 @@ local LocalPlayer = Players.LocalPlayer
 local Portal = workspace.Lobby.Teleport1
 local Reset = LocalPlayer.Reset
 
+local WalkRandomness = 20
 local DistanceTweak = Vector3.new(1, 2, 1)
 local BotSpeed = 21
 local Random = math.random
@@ -160,9 +161,9 @@ local function GetClosestPlayer()
         if v ~= LocalPlayer and Character and LocalPlayer:IsFriendsWith(v.UserId) == false then
             local Humanoid = Character:FindFirstChildWhichIsA("Humanoid")
             if Humanoid then
-                local Root = Humanoid.RootPart
+                local Root = Humanoid.RootPart or Character:WaitForChild("Head", 1)
                 local VisionPosition = LocalRoot.Position-LocalRoot.AssemblyLinearVelocity.Unit*2
-                local InMap = Root.Position.Magnitude < 110
+                local InMap = Root.Position.Magnitude < 115
                 local InLobby = Character:FindFirstChild("InLobby")
                 local Rock = Character:FindFirstChild("rock")
                 local Reverse = Character:FindFirstChild("Reversed")
@@ -229,7 +230,8 @@ local function BehaviourLoop()
                     end
                     local TargetRoot = ClosestPlayer.Character:FindFirstChildWhichIsA("Humanoid").RootPart
                     if LocalHumanoid.Health > 0 then
-                        local TargetPosition = TargetRoot.Position
+                        local RandomOffset = Vector3.new(math.random(-WalkRandomness, WalkRandomness)/10, 0, math.random(-WalkRandomness, WalkRandomness)/10)
+                        local TargetPosition = TargetRoot.Position+RandomOffset
                         LocalHumanoid:MoveTo(TargetPosition)
                         if Distance < 20 and SlapCooldown == false then
                             SlapCooldown = true
