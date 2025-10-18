@@ -15,10 +15,12 @@ local LocalPlayer = Players.LocalPlayer
 local Portal = workspace.Lobby.Teleport1
 local Reset = LocalPlayer.Reset
 
-local ZeroPosition = workspace.Arena["main island"].Grass.Position*Vector3.new(1, 0, 1)
+local Grass = workspace.Arena["main island"].Grass
+local ZeroPosition = Grass.Position
 local BotSpeed = 21
 local Random = math.random
 local Wait = task.wait
+local Abs = math.abs
 
 local TargetGlove = "Default"
 local SlapRemote = ReplicatedStorage.b
@@ -140,7 +142,7 @@ local function CharacterLoaded(Character)
     Humanoid.HipHeight = 0.1
     local Support = Instance.new("BodyPosition", Humanoid.RootPart)
     Support.Position = ZeroPosition
-    Support.MaxForce = Vector3.new(200, 10, 200)
+    Support.MaxForce = Vector3.new(200, 0, 200)
     Support.Name = "Legit Slap Farm Support"
 end
 
@@ -151,6 +153,14 @@ end
 LocalPlayer.CharacterAdded:Connect(CharacterLoaded)
 local Amp = math.clamp(BotSpeed/10, 2, 4)
 print(Amp)
+
+local function ReturnValidVector3Unit(Vector)
+    if Vector.Magnitude == 0 then
+        return Vector3.zero
+    end
+    return Vector
+end
+
 local function GetClosestPlayer()
     local MinimumDistance = 512
     local ClosestPlayer
@@ -161,9 +171,9 @@ local function GetClosestPlayer()
             local Humanoid = Character:FindFirstChildWhichIsA("Humanoid")
             if Humanoid then
                 local Root = Humanoid.RootPart or Character:WaitForChild("Head", 1)
-                local RootPosition = Root.Position+Root.AssemblyLinearVelocity.Unit
+                local RootPosition = Root.Position+ReturnValidVector3Unit(Root.AssemblyLinearVelocity)
                 local VisionPosition = LocalRoot.Position-LocalRoot.AssemblyLinearVelocity.Unit*Amp
-                local InMap = (Root.Position-ZeroPosition).Magnitude < 155
+                local InMap = (Root.Position-ZeroPosition).Magnitude < 120
                 local InLobby = Character:FindFirstChild("InLobby")
                 local Rock = Character:FindFirstChild("rock")
                 local Reverse = Character:FindFirstChild("Reversed")
@@ -173,8 +183,8 @@ local function GetClosestPlayer()
                 local BuddyBox = Character.Head:FindFirstChild("BuddyBox")
                 local Alive = Humanoid.Health > 0
                 local Ragdolled = Character:FindFirstChild("FakePart Right Arm")
+                local AppropiateHeight = Abs(VisionPosition.Y-RootPosition.Y) < 10
                 local Distance = (VisionPosition-Root.Position).Magnitude
-                local AppropiateHeight = math.abs(VisionPosition.Y-RootPosition.Y) < 10
                 local Approved = (InMap and not Rock and not Reverse and not Steve and Visible and not BuddyBox and not Ragdolled and not InLobby and Alive and not Counter and AppropiateHeight) and Distance < MinimumDistance
                 if Approved then
                     MinimumDistance = Distance
@@ -196,13 +206,13 @@ local function ManualEquip()
     local UI = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
     Debris:AddItem(UI, 10)
     local Text = Instance.new("TextLabel", UI)
-    Text.Size = UDim2.new(0.7, 0, 0.2, 0)
+    Text.Size = UDim2.new(0.6, 0, 0.15, 0)
     Text.AnchorPoint = Vector2.new(0.5, 0.5)
     Text.Position = UDim2.new(0.5, 0, 1.1, 0)
     Text.BackgroundTransparency = 1
     Text.TextScaled = true
     Text.TextColor3 = Color3.fromRGB(254, 36, 47)
-    Text.Text = "Click!"
+    Text.Text = "Click! (Move Around If You Cant.)"
     Text.Font = Enum.Font.FredokaOne
     Stroke(Text, 2, Enum.ApplyStrokeMode.Contextual)
     TweenService:Create(Text, TweenInfo.new(1.5, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {Position = UDim2.new(0.5, 0, 0.7, 0)}):Play()
@@ -239,7 +249,7 @@ local function BehaviourLoop()
                         if Distance < 19 and SlapCooldown == false then
                             SlapCooldown = true
                             local TRNG = Random(50, 60)/100
-                            Animation:Play(0.125, 1.1, 1)
+                            Animation:Play()
                             SlapRemote:FireServer(CarHitbox or TargetRoot)
                             task.delay(TRNG, function()
                                 SlapCooldown = false
@@ -273,10 +283,20 @@ local function BehaviourLoop()
     end
 end
 
+Grass.Size *= Vector3.new(1, 1.05, 1.05)
+
 local function AntiAbuseLoop()
     while Wait(0.3) do
         local Character = LocalPlayer.Character
+        print(LocalHumanoid.Parent)
         if LocalHumanoid then
+            if not Character:FindFirstChild("InLobby") then
+                for i, v in ipairs(Character:GetChildren()) do
+                    if v:IsA("BasePart") then
+                        v.CanTouch = false
+                    end
+                end
+            end
             local Root = LocalHumanoid.RootPart or Character:WaitForChild("Head", 1)
             if LocalHumanoid.Sit then
                 LocalHumanoid.Sit = false
