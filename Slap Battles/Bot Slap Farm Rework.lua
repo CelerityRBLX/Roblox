@@ -179,7 +179,7 @@ local function GetClosestPlayer()
                 local Reverse = Character:FindFirstChild("Reversed")
                 local Counter = Character:FindFirstChild("Counterd")
                 local Steve = Character:FindFirstChild("stevebody")
-                local Visible = Character:FindFirstChild("CarKeysCar") or Character.Head.Transparency == 0
+                local Visible = Character:FindFirstChild("CarKeysCar") or (Character:FindFirstChild("Head") or Character:FindFirstChildWhichIsA("BasePart")).Transparency == 0
                 local BuddyBox = Character.Head:FindFirstChild("BuddyBox")
                 local Alive = Humanoid.Health > 0
                 local Ragdolled = Character:FindFirstChild("FakePart Right Arm")
@@ -246,7 +246,7 @@ local function BehaviourLoop()
                     if LocalHumanoid.Health > 0 then
                         local TargetPosition = TargetRoot.Position
                         LocalHumanoid:MoveTo(TargetPosition)
-                        if Distance < 19 and SlapCooldown == false then
+                        if Distance < 18 and SlapCooldown == false then
                             SlapCooldown = true
                             local TRNG = Random(50, 60)/100
                             Animation:Play()
