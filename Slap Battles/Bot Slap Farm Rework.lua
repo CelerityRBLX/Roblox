@@ -16,7 +16,7 @@ local Portal = workspace.Lobby.Teleport1
 local Reset = LocalPlayer.Reset
 
 local DistanceTweak = Vector3.new(1, 2, 1)
-local BotSpeed = 23
+local BotSpeed = 21
 local Random = math.random
 local Wait = task.wait
 
@@ -231,7 +231,7 @@ local function BehaviourLoop()
                     if LocalHumanoid.Health > 0 then
                         local TargetPosition = TargetRoot.Position
                         LocalHumanoid:MoveTo(TargetPosition)
-                        if Distance < 18 and SlapCooldown == false then
+                        if Distance < 20 and SlapCooldown == false then
                             SlapCooldown = true
                             local TRNG = Random(50, 60)/100
                             Animation:Play(0.125, 1.1, 1)
@@ -283,7 +283,7 @@ local function AntiAbuseLoop()
             if LocalHumanoid.Sit then
                 LocalHumanoid.Sit = false
             end
-            if Root.Position.Magnitude > 1536 or Root.Position.Y < -20 then
+            if Root.Position.Magnitude > 1536 or Root.Position.Y < -19 then
                 Reset:FireServer()
                 LocalHumanoid.Health = 0
             end
