@@ -13,6 +13,7 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 local Portal = workspace.Lobby.Teleport1
+local Reset = LocalPlayer.Reset
 
 local DistanceTweak = Vector3.new(1, 2, 1)
 local BotSpeed = 23
@@ -160,7 +161,7 @@ local function GetClosestPlayer()
             local Humanoid = Character:FindFirstChildWhichIsA("Humanoid")
             if Humanoid then
                 local Root = Humanoid.RootPart
-                local VisionPosition = LocalRoot.Position-LocalRoot.AssemblyLinearVelocity.Unit
+                local VisionPosition = LocalRoot.Position-LocalRoot.AssemblyLinearVelocity.Unit*2
                 local InMap = Root.Position.Magnitude < 110
                 local InLobby = Character:FindFirstChild("InLobby")
                 local Rock = Character:FindFirstChild("rock")
@@ -282,7 +283,8 @@ local function AntiAbuseLoop()
             if LocalHumanoid.Sit then
                 LocalHumanoid.Sit = false
             end
-            if Root.Position.Magnitude > 1536 or Root.Position.Y < -30 then
+            if Root.Position.Magnitude > 1536 or Root.Position.Y < -20 then
+                Reset:FireServer()
                 LocalHumanoid.Health = 0
             end
             if not Character:FindFirstChildWhichIsA("Tool") and LocalPlayer.Backpack:FindFirstChildWhichIsA("Tool") then
