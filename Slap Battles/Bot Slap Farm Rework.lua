@@ -140,9 +140,8 @@ local function CharacterLoaded(Character)
     Humanoid.HipHeight = 0.1
     local Support = Instance.new("BodyPosition", Humanoid.RootPart)
     Support.Position = ZeroPosition
-    Support.MaxForce = Vector3.new(500, 10, 500)
+    Support.MaxForce = Vector3.new(200, 10, 200)
     Support.Name = "Legit Slap Farm Support"
-    workspace.Gravity = 200
 end
 
 if LocalPlayer.Character then
@@ -197,7 +196,7 @@ local function ManualEquip()
     local UI = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
     Debris:AddItem(UI, 10)
     local Text = Instance.new("TextLabel", UI)
-    Text.Size = UDim2.new(0.7, 0, 0.3, 0)
+    Text.Size = UDim2.new(0.7, 0, 0.2, 0)
     Text.AnchorPoint = Vector2.new(0.5, 0.5)
     Text.Position = UDim2.new(0.5, 0, 1.1, 0)
     Text.BackgroundTransparency = 1
@@ -205,7 +204,7 @@ local function ManualEquip()
     Text.TextColor3 = Color3.fromRGB(254, 36, 47)
     Text.Text = "Click!"
     Text.Font = Enum.Font.FredokaOne
-    Stroke(Text, 2, Enum.ApplyStrokeMode.Contextual, 0.1)
+    Stroke(Text, 2, Enum.ApplyStrokeMode.Contextual)
     TweenService:Create(Text, TweenInfo.new(1.5, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {Position = UDim2.new(0.5, 0, 0.7, 0)}):Play()
     Glove.Transparency = 0
     Glove.Color = Color3.fromRGB(0, 255, 255)
@@ -256,6 +255,7 @@ local function BehaviourLoop()
                     local Success, _ = xpcall(Equip, function() warn("Automatic Equip Failed") end)
                     if not Success then
                         ManualEquip()
+                        local Start = tick()
                         repeat
                             Wait(0.05)
                         until LocalPlayer.leaderstats.Glove.Value == TargetGlove or tick()-Start > 5
