@@ -16,8 +16,6 @@ local Portal = workspace.Lobby.Teleport1
 local Reset = LocalPlayer.Reset
 
 local ZeroPosition = workspace.Arena["main island"].Grass.Position*Vector3.new(1, 0, 1)
-local WalkRandomness = 20
-local DistanceTweak = Vector3.new(1, 2, 1)
 local BotSpeed = 21
 local Random = math.random
 local Wait = task.wait
@@ -164,6 +162,7 @@ local function GetClosestPlayer()
             local Humanoid = Character:FindFirstChildWhichIsA("Humanoid")
             if Humanoid then
                 local Root = Humanoid.RootPart or Character:WaitForChild("Head", 1)
+                local RootPosition = Root.Position+Root.AssemblyLinearVelocity.Unit
                 local VisionPosition = LocalRoot.Position-LocalRoot.AssemblyLinearVelocity.Unit*Amp
                 local InMap = (Root.Position-ZeroPosition).Magnitude < 115
                 local InLobby = Character:FindFirstChild("InLobby")
@@ -175,8 +174,9 @@ local function GetClosestPlayer()
                 local BuddyBox = Character.Head:FindFirstChild("BuddyBox")
                 local Alive = Humanoid.Health > 0
                 local Ragdolled = Character:FindFirstChild("FakePart Right Arm")
-                local Distance = ((VisionPosition-Root.Position)*DistanceTweak).Magnitude
-                local Approved = (InMap and not Rock and not Reverse and not Steve and Visible and not BuddyBox and not Ragdolled and not InLobby and Alive and not Counter) and Distance < MinimumDistance
+                local Distance = (VisionPosition-Root.Position).Magnitude
+                local AppropiateHeight = math.abs(VisionPosition.Y-RootPosition.Y) < 10
+                local Approved = (InMap and not Rock and not Reverse and not Steve and Visible and not BuddyBox and not Ragdolled and not InLobby and Alive and not Counter and AppropiateHeight) and Distance < MinimumDistance
                 if Approved then
                     MinimumDistance = Distance
                     ClosestPlayer = v
@@ -235,8 +235,7 @@ local function BehaviourLoop()
                     end
                     local TargetRoot = ClosestPlayer.Character:FindFirstChildWhichIsA("Humanoid").RootPart
                     if LocalHumanoid.Health > 0 then
-                        local RandomOffset = Vector3.new(math.random(-WalkRandomness, WalkRandomness)/10, 0, math.random(-WalkRandomness, WalkRandomness)/10)
-                        local TargetPosition = TargetRoot.Position+RandomOffset
+                        local TargetPosition = TargetRoot.Position
                         LocalHumanoid:MoveTo(TargetPosition)
                         if Distance < 19 and SlapCooldown == false then
                             SlapCooldown = true
