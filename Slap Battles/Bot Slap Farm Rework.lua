@@ -163,7 +163,7 @@ local function GetClosestPlayer()
                 local Root = Humanoid.RootPart or Character:WaitForChild("Head", 1)
                 local RootPosition = Root.Position+Root.AssemblyLinearVelocity.Unit
                 local VisionPosition = LocalRoot.Position-LocalRoot.AssemblyLinearVelocity.Unit*Amp
-                local InMap = (Root.Position-ZeroPosition).Magnitude < 115
+                local InMap = (Root.Position-ZeroPosition).Magnitude < 155
                 local InLobby = Character:FindFirstChild("InLobby")
                 local Rock = Character:FindFirstChild("rock")
                 local Reverse = Character:FindFirstChild("Reversed")
