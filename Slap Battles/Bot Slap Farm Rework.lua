@@ -160,15 +160,15 @@ local function ReturnValidVector3Unit(Vector)
     return Vector.Unit
 end
 
-local Amp = math.clamp(BotSpeed*0.1, 2, 4)
-
 local RoamRange = 120
 
 local function GetClosestPlayer()
     local MinimumDistance = 512
     local ClosestPlayer
     local LocalRoot = LocalHumanoid.RootPart
-    local TempAmp = LocalPlayer:GetNetworkPing()*21
+    local Ping = LocalPlayer:GetNetworkPing()*1.1
+    local TempAmp = Ping*20
+    local SelfAmp = Ping*BotSpeed
     for i, v in ipairs(Players:GetPlayers()) do
         local Character = v.Character
         if v ~= LocalPlayer and Character and LocalPlayer:IsFriendsWith(v.UserId) == false then
@@ -176,7 +176,7 @@ local function GetClosestPlayer()
             if Humanoid then
                 local Root = Humanoid.RootPart or Character:WaitForChild("Head", 1)
                 local RootPosition = Root.Position+ReturnValidVector3Unit(Root.AssemblyLinearVelocity)*TempAmp
-                local VisionPosition = LocalRoot.Position-ReturnValidVector3Unit(LocalRoot.AssemblyLinearVelocity)
+                local VisionPosition = LocalRoot.Position-ReturnValidVector3Unit(LocalRoot.AssemblyLinearVelocity)*SelfAmp
                 local InMap = (Root.Position-ZeroPosition).Magnitude < RoamRange
                 local InLobby = Character:FindFirstChild("InLobby")
                 local Rock = Character:FindFirstChild("rock")
@@ -225,10 +225,9 @@ local function ManualEquip()
     Glove.Color = Color3.fromRGB(0, 255, 255)
     Glove.Material = Enum.Material.Neon
     Glove.Position = LocalHumanoid.RootPart.Position + LocalHumanoid.RootPart.CFrame.LookVector*5
-    local Start = tick()
     repeat
         Wait(0.05)
-    until LocalPlayer.leaderstats.Glove.Value == TargetGlove or tick()-Start > 5
+    until LocalPlayer.leaderstats.Glove.Value == TargetGlove
     TweenService:Create(Text, TweenInfo.new(1.5, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {Position = UDim2.new(0.5, 0, 1.1, 0)}):Play()
 end
 
@@ -236,7 +235,7 @@ local SlapCooldown = false
 
 local function BehaviourLoop()
     while true do
-        local AcceptableDistance = 19
+        local AcceptableDistance = 18
         local Character = LocalPlayer.Character
         if LocalHumanoid then
             if not Character:FindFirstChild("InLobby") then
@@ -269,10 +268,9 @@ local function BehaviourLoop()
                     local Success, _ = xpcall(Equip, function() warn("Automatic Equip Failed") end)
                     if not Success then
                         ManualEquip()
-                        local Start = tick()
                         repeat
                             Wait(0.05)
-                        until LocalPlayer.leaderstats.Glove.Value == TargetGlove or tick()-Start > 5
+                        until LocalPlayer.leaderstats.Glove.Value == TargetGlove
                     end
                 else
                     LocalHumanoid:MoveTo(Portal.Position)
@@ -287,7 +285,7 @@ end
 
 Grass.Size *= Vector3.new(1, 1.05, 1.05)
 
-local Adaptation = 1.5
+local Adaptation = 1.25
 
 local function AntiAbuseLoop()
     while Wait(0.3) do
