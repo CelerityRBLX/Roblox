@@ -17,7 +17,7 @@ local Reset = LocalPlayer.Reset
 
 local Grass = workspace.Arena["main island"].Grass
 local ZeroPosition = Grass.Position
-local BotSpeed = 22
+local BotSpeed = 21
 local Random = math.random
 local Wait = task.wait
 local Abs = math.abs
@@ -138,13 +138,13 @@ local Animation
 local function CharacterLoaded(Character)
     local Humanoid = Character:WaitForChild("Humanoid", 10)
     LocalHumanoid = Humanoid
-    Animation = Humanoid:LoadAnimation(SlapAnimation)
+    Animation = (Humanoid:FindFirstChild("Animator") or Humanoid):LoadAnimation(SlapAnimation)
     Humanoid.AutomaticScalingEnabled = false
     Humanoid.HipHeight = 0.1
     local Support = Instance.new("BodyPosition", Humanoid.RootPart)
     Support.Position = ZeroPosition
     Support.MaxForce = Vector3.new(200, 0, 200)
-    Support.Name = "Legit Slap Farm Support"
+    Support.Name = "Bot Support"
 end
 
 if LocalPlayer.Character then
@@ -152,25 +152,36 @@ if LocalPlayer.Character then
 end
 
 LocalPlayer.CharacterAdded:Connect(CharacterLoaded)
-local Amp = math.clamp(BotSpeed/10, 2, 4)
-print(Amp)
+
+local function ReturnValidVector3Unit(Vector)
+    if Vector.Magnitude == 0 then
+        return Vector3.zero
+    end
+    return Vector.Unit
+end
+
+local Amp = math.clamp(BotSpeed*0.1, 2, 4)
+
+local RoamRange = 120
 
 local function GetClosestPlayer()
     local MinimumDistance = 512
     local ClosestPlayer
     local LocalRoot = LocalHumanoid.RootPart
+    local TempAmp = (2.5+LocalPlayer:GetNetworkPing()*2)
     for i, v in ipairs(Players:GetPlayers()) do
         local Character = v.Character
         if v ~= LocalPlayer and Character and LocalPlayer:IsFriendsWith(v.UserId) == false then
             local Humanoid = Character:FindFirstChildWhichIsA("Humanoid")
             if Humanoid then
                 local Root = Humanoid.RootPart or Character:WaitForChild("Head", 1)
-                local RootPosition = Root.Position
-                local VisionPosition = LocalRoot.Position-LocalRoot.AssemblyLinearVelocity.Unit*Amp
-                local InMap = (Root.Position-ZeroPosition).Magnitude < 120
+                local RootPosition = Root.Position+ReturnValidVector3Unit(Root.AssemblyLinearVelocity)*TempAmp
+                local VisionPosition = LocalRoot.Position-ReturnValidVector3Unit(LocalRoot.AssemblyLinearVelocity)
+                local InMap = (Root.Position-ZeroPosition).Magnitude < RoamRange
                 local InLobby = Character:FindFirstChild("InLobby")
                 local Rock = Character:FindFirstChild("rock")
                 local Reverse = Character:FindFirstChild("Reversed")
+                local Skull = Character:FindFirstChild("Skull")
                 local Counter = Character:FindFirstChild("Counterd")
                 local Steve = Character:FindFirstChild("stevebody")
                 local Visible = Character:FindFirstChild("CarKeysCar") or (Character:FindFirstChild("Head") or Character:FindFirstChildWhichIsA("BasePart")).Transparency == 0
@@ -179,7 +190,7 @@ local function GetClosestPlayer()
                 local Ragdolled = Character:FindFirstChild("FakePart Right Arm")
                 local AppropiateHeight = Abs(VisionPosition.Y-RootPosition.Y) < 10
                 local Distance = (VisionPosition-Root.Position).Magnitude
-                local Approved = (InMap and not Rock and not Reverse and not Steve and Visible and not BuddyBox and not Ragdolled and not InLobby and Alive and not Counter and AppropiateHeight) and Distance < MinimumDistance
+                local Approved = (InMap and not Rock and not Reverse and not Steve and not Skull and Visible and not BuddyBox and not Ragdolled and not InLobby and Alive and not Counter and AppropiateHeight) and Distance < MinimumDistance
                 if Approved then
                     MinimumDistance = Distance
                     ClosestPlayer = v
@@ -187,7 +198,6 @@ local function GetClosestPlayer()
             end
         end
     end
-    print("Distance: "..MinimumDistance)
     return ClosestPlayer, MinimumDistance
 end
 
@@ -214,7 +224,7 @@ local function ManualEquip()
     Glove.Transparency = 0
     Glove.Color = Color3.fromRGB(0, 255, 255)
     Glove.Material = Enum.Material.Neon
-    Glove.Position = LocalPlayer.Character.Head.Position + LocalPlayer.Character.Head.CFrame.LookVector*5
+    Glove.Position = LocalHumanoid.RootPart.Position + LocalHumanoid.RootPart.CFrame.LookVector*5
     local Start = tick()
     repeat
         Wait(0.05)
@@ -226,8 +236,7 @@ local SlapCooldown = false
 
 local function BehaviourLoop()
     while true do
-        local AcceptableDistance = 18-(LocalPlayer:GetNetworkPing()*2)
-        local RRNG = Random(50, 90)/1000
+        local AcceptableDistance = 19
         local Character = LocalPlayer.Character
         if LocalHumanoid then
             if not Character:FindFirstChild("InLobby") then
@@ -240,11 +249,11 @@ local function BehaviourLoop()
                     end
                     local TargetRoot = ClosestPlayer.Character:FindFirstChildWhichIsA("Humanoid").RootPart
                     if LocalHumanoid.Health > 0 then
-                        local TargetPosition = TargetRoot.Position
+                        local TargetPosition = TargetRoot.Position+ReturnValidVector3Unit(TargetRoot.AssemblyLinearVelocity)
                         LocalHumanoid:MoveTo(TargetPosition)
                         if Distance < AcceptableDistance and SlapCooldown == false then
                             SlapCooldown = true
-                            local TRNG = Random(50, 60)/100
+                            local TRNG = Random(50, 60)*0.01
                             Animation:Play()
                             SlapRemote:FireServer(CarHitbox or TargetRoot)
                             task.delay(TRNG, function()
@@ -257,7 +266,6 @@ local function BehaviourLoop()
                 end
             else
                 if LocalPlayer.leaderstats.Glove.Value ~= TargetGlove then
-                    print(TargetGlove)
                     local Success, _ = xpcall(Equip, function() warn("Automatic Equip Failed") end)
                     if not Success then
                         ManualEquip()
@@ -272,9 +280,7 @@ local function BehaviourLoop()
             end
             local Speed = BotSpeed*2-math.clamp(LocalHumanoid.RootPart.AssemblyLinearVelocity.Magnitude, 0, BotSpeed)
             LocalHumanoid.WalkSpeed = Speed
-            print(Speed)
         end
-        Wait(RRNG)
         RunService.RenderStepped:Wait()
     end
 end
@@ -284,14 +290,15 @@ Grass.Size *= Vector3.new(1, 1.05, 1.05)
 local function AntiAbuseLoop()
     while Wait(0.3) do
         local Character = LocalPlayer.Character
-        print(LocalHumanoid.Parent)
         if LocalHumanoid then
+            Wait(0.05)
             if not Character:FindFirstChild("InLobby") then
                 for i, v in ipairs(Character:GetChildren()) do
                     if v:IsA("BasePart") then
                         v.CanTouch = false
                     end
                 end
+                Wait(0.05)
             end
             local Root = LocalHumanoid.RootPart or Character:WaitForChild("Head", 1)
             if LocalHumanoid.Sit then
@@ -301,6 +308,17 @@ local function AntiAbuseLoop()
                 Reset:FireServer()
                 LocalHumanoid.Health = 0
                 Wait(1)
+            end
+            if LocalHumanoid.Health == 0 then
+                RoamRange -= 30
+                BotSpeed += 2
+                print("RoamRange Decreased To: "..RoamRange)
+                Wait(3)
+                task.delay(60, function()
+                    RoamRange += 30
+                    BotSpeed -= 2
+                    print("RoamRange Increased To: "..RoamRange)
+                end)
             end
             if not Character:FindFirstChildWhichIsA("Tool") and LocalPlayer.Backpack:FindFirstChildWhichIsA("Tool") then
                 LocalPlayer.Backpack:FindFirstChildWhichIsA("Tool").Parent = Character
