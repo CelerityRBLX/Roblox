@@ -167,7 +167,7 @@ local function GetClosestPlayer()
     local ClosestPlayer
     local LocalRoot = LocalHumanoid.RootPart
     local Ping = LocalPlayer:GetNetworkPing()*1.1
-    local TempAmp = Ping*20
+    local TempAmp = Ping*21
     local SelfAmp = Ping*BotSpeed
     for i, v in ipairs(Players:GetPlayers()) do
         local Character = v.Character
@@ -252,7 +252,7 @@ local function BehaviourLoop()
                         LocalHumanoid:MoveTo(TargetPosition)
                         if Distance < AcceptableDistance and SlapCooldown == false then
                             SlapCooldown = true
-                            local TRNG = Random(50, 60)*0.01
+                            local TRNG = Random(55, 65)*0.01
                             Animation:Play()
                             SlapRemote:FireServer(CarHitbox or TargetRoot)
                             task.delay(TRNG, function()
