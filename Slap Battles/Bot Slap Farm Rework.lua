@@ -168,7 +168,7 @@ local function GetClosestPlayer()
     local MinimumDistance = 512
     local ClosestPlayer
     local LocalRoot = LocalHumanoid.RootPart
-    local TempAmp = (2.5+LocalPlayer:GetNetworkPing()*2)
+    local TempAmp = LocalPlayer:GetNetworkPing()*21
     for i, v in ipairs(Players:GetPlayers()) do
         local Character = v.Character
         if v ~= LocalPlayer and Character and LocalPlayer:IsFriendsWith(v.UserId) == false then
@@ -287,6 +287,8 @@ end
 
 Grass.Size *= Vector3.new(1, 1.05, 1.05)
 
+local Adaptation = 1.5
+
 local function AntiAbuseLoop()
     while Wait(0.3) do
         local Character = LocalPlayer.Character
@@ -310,13 +312,13 @@ local function AntiAbuseLoop()
                 Wait(1)
             end
             if LocalHumanoid.Health == 0 then
-                RoamRange -= 30
-                BotSpeed += 2
+                RoamRange /= Adaptation
+                BotSpeed *= Adaptation
                 print("RoamRange Decreased To: "..RoamRange)
                 Wait(3)
                 task.delay(60, function()
-                    RoamRange += 30
-                    BotSpeed -= 2
+                    RoamRange *= Adaptation
+                    BotSpeed /= Adaptation
                     print("RoamRange Increased To: "..RoamRange)
                 end)
             end
