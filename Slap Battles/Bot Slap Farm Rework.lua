@@ -132,8 +132,8 @@ repeat
 until getgenv().BSF
 TweenService:Create(Frame, TweenInfo.new(1.5, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {Position = UDim2.new(0.5, 0, 1.55, 0)}):Play()
 
-local LocalHumanoid = LocalPlayer.Character.Humanoid
-local Animation = LocalHumanoid:LoadAnimation(SlapAnimation)
+local LocalHumanoid
+local Animation
 
 local function CharacterLoaded(Character)
     local Humanoid = Character:WaitForChild("Humanoid", 10)
