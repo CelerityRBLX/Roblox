@@ -11,7 +11,7 @@ local Ipairs = ipairs
 local Tick = tick
 local Wait = task.wait
 MaxVelocity -= 5
-local XY = Vector3.new(1, 0.1, 1)
+local XY = Vector3.new(1, 0.2, 1)
 
 local function Character()
 	while Wait(1) do
@@ -28,7 +28,7 @@ end
 local function SafeTeleport(CF)
 	local Root = CollectionService:GetTagged("Root")[1]
 	local Distance = ((Root.Position-CF.Position)*XY).Magnitude
-	local Time = Distance/MaxVelocity
+	local Time = (Distance/MaxVelocity)+0.5
 	local Tween = TweenService:Create(Root, TweenInfo.new(Time, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {CFrame = CF})
 	Tween:Play()
 	local Start = tick()
@@ -40,7 +40,7 @@ end
 
 workspace.Map["WaterBase-Plane"].Size = Vector3.new(1000, 112, 1000)
 
-local Bounds = 1024*8
+local Bounds = 1024*10
 
 local function Added(Descendant)
 	if Descendant.Parent == workspace or Descendant:IsDescendantOf(workspace.Map) then
