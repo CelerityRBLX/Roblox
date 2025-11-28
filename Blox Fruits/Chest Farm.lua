@@ -3,15 +3,14 @@ local LocalPlayer = Players.LocalPlayer
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local CollectionService = game:GetService("CollectionService")
-local MaxVelocity = 370
+local MaxVelocity = 360
 local Hearbeat = RunService.Heartbeat
 local Match = string.match
 local DescendantAdded = workspace.DescendantAdded
 local Ipairs = ipairs
 local Tick = tick
 local Wait = task.wait
-MaxVelocity -= 5
-local XY = Vector3.new(1, 0.2, 1)
+local XY = Vector3.new(1, 0.5, 1)
 
 local function Character()
 	while Wait(1) do
