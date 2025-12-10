@@ -26,6 +26,8 @@ local Ipairs = ipairs
 local OParams = OverlapParams.new()
 local Wait = task.wait
 local Spawn = task.spawn
+local Remove = table.remove
+local Insert = table.insert
 local Huge = math.huge
 local Massive = 1024
 
@@ -33,6 +35,11 @@ local AverageOneWay = 0.075
 
 function Nebula.ReturnRemoteForGlove(Glove)
     return ReplicatedStorage:FindFirstChild(GloveToRemoteStore[Glove or LocalPlayer.leaderstats.Glove.Value])
+end
+
+local function GetBestRemote(Remote)
+    local BestRemote = Remote or Nebula.ReturnRemoteForGlove() or GeneralHit
+    return BestRemote
 end
 
 local function ApproveCharacter(Character)
@@ -65,7 +72,7 @@ function Nebula.GetClosestPlayer(RagdollCheck, MaxRange)
         return ClosestPlayer, MinimumDistance
     end
     local PrimaryPart = LocalPlayer.Character.PrimaryPart
-    local SelfPosition = PrimaryPart.Position-ReturnUnit(PrimaryPart.AssemblyLinearVelocity)
+    local SelfPosition = PrimaryPart.Position
     for _, v in Ipairs(Players:GetPlayers()) do
         if v ~= LocalPlayer and v.Character then
             local Root = v.Character:FindFirstChild("HumanoidRootPart")
@@ -94,7 +101,7 @@ function Nebula.GetClosestCharacter(RagdollCheck, MaxRange)
         return ClosestCharacter, MinimumDistance
     end
     local PrimaryPart = LocalPlayer.Character.PrimaryPart
-    local SelfPosition = PrimaryPart.Position-ReturnUnit(PrimaryPart.AssemblyLinearVelocity)
+    local SelfPosition = PrimaryPart.Position
     local Rad = Workspace:GetPartBoundsInRadius(SelfPosition, MaxRange or Massive, OParams)
     for _, v in Ipairs(Rad) do
         local Character = v.Parent
@@ -117,16 +124,13 @@ function Nebula.GetClosestCharacter(RagdollCheck, MaxRange)
     return ClosestCharacter, MinimumDistance
 end
 
-local QueueRemote = nil
-
-function Nebula.QueueSlap(Part, Remote)
-    QueueRemote = Remote or Nebula.ReturnRemoteForGlove() or QueueRemote or GeneralHit
-    table.insert(SlapQueue, Part)
+function Nebula.QueueSlap(Part)
+    Insert(SlapQueue, Part)
     print("Queued Slap")
 end
 
 function Nebula.Slap(Part, Remote)
-    Remote = Remote or Nebula.ReturnRemoteForGlove() or GeneralHit
+    Remote = GetBestRemote(Remote)
     Remote:FireServer(Part)
     print("Slapped Via Slap Function")
 end
@@ -136,11 +140,11 @@ Spawn(function()
     while Wait() do
         if #SlapQueue > 0 then
             local CurrentSlap = SlapQueue[1]
-			table.remove(SlapQueue, 1)
-            CachedSlap(CurrentSlap, QueueRemote)
+			Remove(SlapQueue, 1)
+            CachedSlap(CurrentSlap, GetBestRemote())
             print("Slapped Via Slap Queue")
             if #SlapQueue >= 3 then
-                table.remove(SlapQueue, 1)
+                Remove(SlapQueue, 1)
                 print("Removing Excess Slap Request From Queue")
             end
             Wait(0.55)
@@ -149,7 +153,7 @@ Spawn(function()
 end)
 
 
-local randomassstring = "meganih"
+local randomassstring = "super dih"
 print("upd status: "..randomassstring)
 
 return Nebula
