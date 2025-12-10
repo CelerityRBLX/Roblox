@@ -128,17 +128,17 @@ Spawn(function()
 			table.remove(SlapQueue, 1)
             Nebula.Slap(CurrentSlap, QueueRemote)
             print("Slapped Via Slap Queue")
-            if #SlapQueue >= 5 then
-                table.remove(SlapQueue, 5)
+            if #SlapQueue >= 3 then
+                table.remove(SlapQueue, 3)
                 print("Removing Excess Slap Request From Queue")
             end
-            Wait(0.55)
+            Wait(0.525)
         end
     end
 end)
 
 
-local randomassstring = "34568"
+local randomassstring = "aaa34568"
 print("upd status: "..randomassstring)
 
 return Nebula
