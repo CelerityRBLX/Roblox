@@ -34,7 +34,8 @@ local Massive = 1024
 local AverageOneWay = 0.075
 
 function Nebula.ReturnRemoteForGlove(Glove)
-    return ReplicatedStorage:FindFirstChild(GloveToRemoteStore[Glove or LocalPlayer.leaderstats.Glove.Value])
+    Glove = Glove or LocalPlayer.leaderstats.Glove.Value
+    return ReplicatedStorage:FindFirstChild(GloveToRemoteStore[Glove])
 end
 
 local function GetBestRemote(Remote)
@@ -155,7 +156,7 @@ Spawn(function()
 end)
 
 
-local randomassstring = "true hipa dih"
+local randomassstring = "43567true hipa dih"
 print("upd status: "..randomassstring)
 
 return Nebula
