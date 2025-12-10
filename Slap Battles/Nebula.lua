@@ -72,7 +72,7 @@ function Nebula.GetClosestPlayer(RagdollCheck, MaxRange)
             if not Root then 
                 continue
             end
-            local PredictedPosition = Root.Position+Root.AssemblyLinearVelocity*AverageOneWay
+            local PredictedPosition = Root.Position+ReturnUnit(Root.AssemblyLinearVelocity)--+Root.AssemblyLinearVelocity*AverageOneWay
             local Distance = (SelfPosition-PredictedPosition).Magnitude
             local RP = v.Character:FindFirstChild("FakePart Right Arm")
             local CA = ApproveCharacter(v.Character)
@@ -104,7 +104,7 @@ function Nebula.GetClosestCharacter(RagdollCheck, MaxRange)
                 continue
             end
             local Root = v
-            local PredictedPosition = Root.Position+Root.AssemblyLinearVelocity*AverageOneWay
+            local PredictedPosition = Root.Position+ReturnUnit(Root.AssemblyLinearVelocity)--+Root.AssemblyLinearVelocity*AverageOneWay
             local Distance = (SelfPosition-PredictedPosition).Magnitude
             local RP = Character:FindFirstChild("FakePart Right Arm")
             local CA = ApproveCharacter(Character)
@@ -149,7 +149,7 @@ Spawn(function()
 end)
 
 
-local randomassstring = "ABA3546"
+local randomassstring = "nihfre"
 print("upd status: "..randomassstring)
 
 return Nebula
