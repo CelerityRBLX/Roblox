@@ -35,6 +35,19 @@ function Nebula.ReturnRemoteForGlove(Glove)
     return ReplicatedStorage:FindFirstChild(GloveToRemoteStore[Glove or LocalPlayer.leaderstats.Glove.Value])
 end
 
+local function ApproveCharacter(Character)
+    local Approved = true
+    for _, Instances in Ipairs(ExceptionInstances) do
+        if Character:FindFirstChild(Instances) then
+            Approved = false
+        end
+    end
+    if Character:FindFirstChildWhichIsA("Humanoid").Health <= 0 or Character:FindFirstChild("Head").Transparency > 0 then
+        Approved = false
+    end
+    return Approved
+end
+
 function Nebula.GetClosestPlayer(RagdollCheck, MaxRange)
     local MinimumDistance = MaxRange or Massive
     local ClosestPlayer
@@ -53,13 +66,8 @@ function Nebula.GetClosestPlayer(RagdollCheck, MaxRange)
             local PredictedPosition = Root.Position+Root.AssemblyLinearVelocity*AverageOneWay
             local Distance = (SelfPosition-PredictedPosition).Magnitude
             local RP = v.Character:FindFirstChild("FakePart Right Arm")
-            local Exception
-            for _, Instances in Ipairs(ExceptionInstances) do
-                if v.Character:FindFirstChild(Instances) then
-                    Exception = true
-                end
-            end
-            if Distance < MinimumDistance and not (RagdollCheck and RP) and not Exception then
+            local CA = ApproveCharacter(v.Character)
+            if Distance < MinimumDistance and not (RagdollCheck and RP) and CA then
                 MinimumDistance = Distance
                 ClosestPlayer = v
             end
@@ -89,13 +97,8 @@ function Nebula.GetClosestCharacter(RagdollCheck, MaxRange)
             local PredictedPosition = Root.Position+Root.AssemblyLinearVelocity*AverageOneWay
             local Distance = (SelfPosition-PredictedPosition).Magnitude
             local RP = Character:FindFirstChild("FakePart Right Arm")
-            local Exception
-            for _, Instances in Ipairs(ExceptionInstances) do
-                if Character:FindFirstChild(Instances) then
-                    Exception = true
-                end
-            end
-            if Distance < MinimumDistance and not (RP and RagdollCheck) and not Exception then
+            local CA = ApproveCharacter(Character)
+            if Distance < MinimumDistance and not (RP and RagdollCheck) and CA then
                 MinimumDistance = Distance
                 ClosestCharacter = Character
             end
@@ -125,13 +128,17 @@ Spawn(function()
 			table.remove(SlapQueue, 1)
             Nebula.Slap(CurrentSlap, QueueRemote)
             print("Slapped Via Slap Queue")
+            if #SlapQueue >= 5 then
+                table.remove(SlapQueue, 5)
+                print("Removing Excess Slap Request From Queue")
+            end
             Wait(0.55)
         end
     end
 end)
 
 
-local randomassstring = "eadsfnihaaa"
+local randomassstring = "34568"
 print("upd status: "..randomassstring)
 
 return Nebula
