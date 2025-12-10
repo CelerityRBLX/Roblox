@@ -7,6 +7,19 @@ local GeneralHit = ReplicatedStorage.GeneralHit
 local LocalPlayer = Players.LocalPlayer
 local ExceptionInstances = {"InLobby", "rock", "Reversed", "Counterd", "stevebody"}
 
+local GloveToRemoteStore = {
+    Default = "b",
+    Diamond = "DiamondHit",
+    ZZZZZZZ = "ZZZZZZZHit",
+    Extended = "b",
+    Dual = "GeneralHit",
+    Brick = "BrickHit",
+    Snow = "SnowHit",
+    Pull = "PullHit",
+    Flash = "FlashHit",
+    Spring = "springhit",
+}
+
 local SlapQueue = {}
 
 local Ipairs = ipairs
@@ -15,6 +28,10 @@ local Wait = task.wait
 local Spawn = task.spawn
 local Huge = math.huge
 local Massive = 1024
+
+function Nebula.ReturnRemoteForGlove(Glove)
+    return ReplicatedStorage:FindFirstChild(GloveToRemoteStore[Glove or LocalPlayer.leaderstats.Glove.Value])
+end
 
 function Nebula.GetClosestPlayer(RagdollCheck, MaxRange)
     local MinimumDistance = MaxRange or Massive
@@ -83,7 +100,7 @@ function Nebula.GetClosestCharacter(RagdollCheck, MaxRange)
     return ClosestCharacter, MinimumDistance
 end
 
-local QueueRemote = GeneralHit
+local QueueRemote = Nebula.ReturnRemoteForGlove() or GeneralHit
 
 function Nebula.QueueSlap(Part, Remote)
     QueueRemote = Remote or QueueRemote
@@ -108,6 +125,10 @@ Spawn(function()
         end
     end
 end)
+
+
+local randomassstring = "nih"
+print("upd status: "..randomassstring)
 
 return Nebula
 --yes youre allowed to skid it
