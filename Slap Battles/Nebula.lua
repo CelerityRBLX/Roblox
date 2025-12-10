@@ -100,16 +100,16 @@ function Nebula.GetClosestCharacter(RagdollCheck, MaxRange)
     return ClosestCharacter, MinimumDistance
 end
 
-local QueueRemote = Nebula.ReturnRemoteForGlove() or GeneralHit
+local QueueRemote = nil
 
 function Nebula.QueueSlap(Part, Remote)
-    QueueRemote = Remote or QueueRemote
+    QueueRemote = Remote or Nebula.ReturnRemoteForGlove() or QueueRemote or GeneralHit
     table.insert(SlapQueue, Part)
     print("Queued Slap")
 end
 
 function Nebula.Slap(Part, Remote)
-    Remote = Remote or GeneralHit
+    Remote = Remote or Nebula.ReturnRemoteForGlove() or GeneralHit
     Remote:FireServer(Part)
     print("Slapped Via Slap Function")
 end
@@ -127,7 +127,7 @@ Spawn(function()
 end)
 
 
-local randomassstring = "nih"
+local randomassstring = "nihaaa"
 print("upd status: "..randomassstring)
 
 return Nebula
