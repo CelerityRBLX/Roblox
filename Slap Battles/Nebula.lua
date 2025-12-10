@@ -29,6 +29,8 @@ local Spawn = task.spawn
 local Huge = math.huge
 local Massive = 1024
 
+local AverageOneWay = 0.075
+
 function Nebula.ReturnRemoteForGlove(Glove)
     return ReplicatedStorage:FindFirstChild(GloveToRemoteStore[Glove or LocalPlayer.leaderstats.Glove.Value])
 end
@@ -48,7 +50,8 @@ function Nebula.GetClosestPlayer(RagdollCheck, MaxRange)
             if not Root then 
                 continue
             end
-            local Distance = (SelfPosition-Root.Position).Magnitude
+            local PredictedPosition = Root.Position+Root.AssemblyLinearVelocity*AverageOneWay
+            local Distance = (SelfPosition-PredictedPosition).Magnitude
             local RP = v.Character:FindFirstChild("FakePart Right Arm")
             local Exception
             for _, Instances in Ipairs(ExceptionInstances) do
@@ -83,7 +86,8 @@ function Nebula.GetClosestCharacter(RagdollCheck, MaxRange)
                 continue
             end
             local Root = v
-            local Distance = (SelfPosition-Root.Position).Magnitude
+            local PredictedPosition = Root.Position+Root.AssemblyLinearVelocity*AverageOneWay
+            local Distance = (SelfPosition-PredictedPosition).Magnitude
             local RP = Character:FindFirstChild("FakePart Right Arm")
             local Exception
             for _, Instances in Ipairs(ExceptionInstances) do
@@ -127,7 +131,7 @@ Spawn(function()
 end)
 
 
-local randomassstring = "nihaaa"
+local randomassstring = "eadsfnihaaa"
 print("upd status: "..randomassstring)
 
 return Nebula
