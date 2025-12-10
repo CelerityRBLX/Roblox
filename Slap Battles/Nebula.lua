@@ -48,6 +48,14 @@ local function ApproveCharacter(Character)
     return Approved
 end
 
+local function ReturnUnit(Vector)
+    local Unit = Vector3.zero
+    if Vector.Magnitude > 0 then
+        Unit = Vector.Unit
+    end
+    return Unit
+end
+
 function Nebula.GetClosestPlayer(RagdollCheck, MaxRange)
     local MinimumDistance = MaxRange or Massive
     local ClosestPlayer
@@ -56,7 +64,8 @@ function Nebula.GetClosestPlayer(RagdollCheck, MaxRange)
     elseif not LocalPlayer.Character.PrimaryPart then
         return ClosestPlayer, MinimumDistance
     end
-    local SelfPosition = LocalPlayer.Character.PrimaryPart.Position
+    local PrimaryPart = LocalPlayer.Character.PrimaryPart
+    local SelfPosition = PrimaryPart.Position-ReturnUnit(PrimaryPart.AssemblyLinearVelocity)
     for _, v in Ipairs(Players:GetPlayers()) do
         if v ~= LocalPlayer and v.Character then
             local Root = v.Character:FindFirstChild("HumanoidRootPart")
@@ -84,7 +93,8 @@ function Nebula.GetClosestCharacter(RagdollCheck, MaxRange)
     elseif not LocalPlayer.Character.PrimaryPart then
         return ClosestCharacter, MinimumDistance
     end
-    local SelfPosition = LocalPlayer.Character.PrimaryPart.Position
+    local PrimaryPart = LocalPlayer.Character.PrimaryPart
+    local SelfPosition = PrimaryPart.Position-ReturnUnit(PrimaryPart.AssemblyLinearVelocity)
     local Rad = Workspace:GetPartBoundsInRadius(SelfPosition, MaxRange or Massive, OParams)
     for _, v in Ipairs(Rad) do
         local Character = v.Parent
@@ -122,23 +132,24 @@ function Nebula.Slap(Part, Remote)
 end
 
 Spawn(function()
+    local CachedSlap = Nebula.Slap
     while Wait() do
         if #SlapQueue > 0 then
             local CurrentSlap = SlapQueue[1]
 			table.remove(SlapQueue, 1)
-            Nebula.Slap(CurrentSlap, QueueRemote)
+            CachedSlap(CurrentSlap, QueueRemote)
             print("Slapped Via Slap Queue")
             if #SlapQueue >= 3 then
                 table.remove(SlapQueue, 3)
                 print("Removing Excess Slap Request From Queue")
             end
-            Wait(0.525)
+            Wait(0.55)
         end
     end
 end)
 
 
-local randomassstring = "aaa34568"
+local randomassstring = "ABA3546"
 print("upd status: "..randomassstring)
 
 return Nebula
