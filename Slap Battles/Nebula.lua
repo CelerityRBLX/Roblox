@@ -140,7 +140,7 @@ Spawn(function()
             CachedSlap(CurrentSlap, QueueRemote)
             print("Slapped Via Slap Queue")
             if #SlapQueue >= 3 then
-                table.remove(SlapQueue, 3)
+                table.remove(SlapQueue, 1)
                 print("Removing Excess Slap Request From Queue")
             end
             Wait(0.55)
@@ -149,7 +149,7 @@ Spawn(function()
 end)
 
 
-local randomassstring = "nihfre"
+local randomassstring = "meganih"
 print("upd status: "..randomassstring)
 
 return Nebula
