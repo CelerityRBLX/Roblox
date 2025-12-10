@@ -137,23 +137,25 @@ end
 
 Spawn(function()
     local CachedSlap = Nebula.Slap
+    if #SlapQueue > 3 then
+        repeat
+            Remove(SlapQueue, 1)
+        until #SlapQueue <= 3
+        print("Removing Excess Slap Request From Queue")
+    end
     while Wait() do
         if #SlapQueue > 0 then
             local CurrentSlap = SlapQueue[1]
 			Remove(SlapQueue, 1)
             CachedSlap(CurrentSlap, GetBestRemote())
             print("Slapped Via Slap Queue")
-            if #SlapQueue >= 3 then
-                Remove(SlapQueue, 1)
-                print("Removing Excess Slap Request From Queue")
-            end
             Wait(0.55)
         end
     end
 end)
 
 
-local randomassstring = "super dih"
+local randomassstring = "hipa dih"
 print("upd status: "..randomassstring)
 
 return Nebula
