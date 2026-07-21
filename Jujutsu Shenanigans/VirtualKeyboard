@@ -1,0 +1,29 @@
+local Players = game:GetService("Players")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local Heartbeat = game:GetService("RunService").Heartbeat
+local LocalPlayer = Players.LocalPlayer
+local MovesetFrame = LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("Controls"):WaitForChild("Moveset")
+
+local tn = tonumber
+local function NumberKey(Key : string)
+    local Keys = {Enum.KeyCode.One, Enum.KeyCode.Two, Enum.KeyCode.Three, Enum.KeyCode.Four, Enum.KeyCode.Five}
+    local KeyCode = Keys[tn(Key)]
+    VirtualInputManager:SendKeyEvent(true, KeyCode, false, game)
+    Heartbeat:Wait()
+    VirtualInputManager:SendKeyEvent(false, KeyCode, false, game)
+    Heartbeat:Wait()
+end
+
+LocalPlayer.CharacterAppearanceLoaded:Connect(function()
+    task.wait(1.5)
+    for i, v in MovesetFrame:GetChildren() do
+        local Key = v:FindFirstChild("Key")
+        local ItemName = v:FindFirstChild("ItemName")
+        if Key and ItemName then
+            ItemName.Activated:Connect(function()
+                NumberKey(Key.Key.Text)
+                warn("presss")
+            end)
+        end
+    end
+end)
